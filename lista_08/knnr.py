@@ -1,5 +1,3 @@
-from collections import Counter
-
 import numpy as np
 
 
@@ -16,13 +14,15 @@ class KNNR:
         self.y_train = y
 
     def predict(self, X):
-        y_pred = [self._predict(x) for x in X]
+        y_pred = []
+        for x in X:
+            y_pred.append(self._predict(x))
         return np.array(y_pred)
 
     def _predict(self, x):
-        # Compute distances between x and all examples in the training set
-        distances = [euclidean_distance(x, x_train)
-                     for x_train in self.X_train]
-        # Sort by distance and return indices of the first k neighbors
+        distances = []
+        for x_train in self.X_train:
+            distances.append(euclidean_distance(x, x_train))
         k_idx = np.argsort(distances)[: self.k]
-        return np.mean(k_idx)
+        k_neighbor_labels = [self.y_train[i] for i in k_idx]
+        return np.mean(k_neighbor_labels)

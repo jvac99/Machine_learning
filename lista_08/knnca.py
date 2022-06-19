@@ -15,18 +15,18 @@ class KNNCA:
         self.X_train = X
         self.y_train = y
 
-    def obter_idx_kNN(self, X, linha, k):
-        dist_euc = dist_euclidiana(X, linha)
-        idx_sort = np.argsort(dist_euc)
-        return idx_sort[0:k]
+    def predict(self, X_test):
+        y_pred = []
+        for x in X_test:
+            y_pred.append(self._classifica(x))
+        return np.array(y_pred)
 
-    def classifica(self, X, y, linha, k):
-        idx_kNN = obter_idx_kNN(X, linha, k=k)
-        count = np.bincount(y[idx_kNN])
+    def _classifica(self, x):
+        idx_kNN = self._obter_idx_kNN(x)
+        count = np.bincount(self.y_train[idx_kNN])
         return np.argmax(count)
 
-    def predict(self, X_train, y_train, X_test, k):
-        lista = []
-        for linha in X_test:
-            lista.append(classifica(X_train, y_train, linha, k))
-        return np.array(lista)
+    def _obter_idx_kNN(self, x):
+        dist_euc = dist_euclidiana(self.X_train, x)
+        idx_sort = np.argsort(dist_euc)
+        return idx_sort[0:self.k]

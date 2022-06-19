@@ -1,3 +1,4 @@
+from collections import Counter
 import numpy as np
 
 
@@ -15,17 +16,17 @@ class KNNRE:
         self.X_train = X
         self.y_train = y
 
-    def obter_idx_kNN(self, X, linha, k):
-        dist_euc = dist_euclidiana(X, linha)
+    def predict(self, X_test):
+        y_pred = []
+        for x in X_test:
+            y_pred.append(self._regressao(x))
+        return np.array(y_pred)
+
+    def _regressao(self, x):
+        idx_kNN = self._obter_idx_kNN(x)
+        return np.mean(self.y_train[idx_kNN])
+
+    def _obter_idx_kNN(self, x):
+        dist_euc = dist_euclidiana(self.X_train, x)
         idx_sort = np.argsort(dist_euc)
-        return idx_sort[0:k]
-
-    def regressao(X, y, linha, k):
-        idx_kNN = obter_idx_kNN(X, linha, k=k)
-        return np.mean(y[idx_kNN])
-
-    def predict(self, X_train, y_train, X_test, k):
-        lista = []
-        for linha in X_test:
-            lista.append(regressao(X_train, y_train, linha, k))
-        return np.array(lista)
+        return idx_sort[0:self.k]
